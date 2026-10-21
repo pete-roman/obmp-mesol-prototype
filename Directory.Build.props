@@ -1,0 +1,30 @@
+<Project>
+
+  <!--
+    Shared by every MESOL project. The SDK and chat come from NuGet (public OB:MP 1.0 packages).
+    Keep the two versions below matched to the OB:MP server you run the mod on.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Version>0.4.2</Version>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <ObmpSdkVersion>1.0.0-rc.2</ObmpSdkVersion>
+    <ObmpChatVersion>1.0.0-rc.3</ObmpChatVersion>
+  </PropertyGroup>
+
+  <!--
+    MESOL rolls traits through RpRoll (RpRollApi, RpRoll 0.8.5 or newer). RpRollRoot is the RpRoll source folder:
+    RpRoll\ next to MESOL\ in the obmp-mods repository, otherwise a clone of obmp-rproll next to this repository.
+    Pass /p:RpRollRoot=<folder>\ to use another one.
+  -->
+  <PropertyGroup Condition="'$(RpRollRoot)' == ''">
+    <RpRollRoot Condition="Exists('$(MSBuildThisFileDirectory)..\RpRoll\Server\RpRoll.Server.csproj')">$(MSBuildThisFileDirectory)..\RpRoll\</RpRollRoot>
+    <RpRollRoot Condition="'$(RpRollRoot)' == ''">$(MSBuildThisFileDirectory)..\obmp-rproll\</RpRollRoot>
+  </PropertyGroup>
+
+</Project>

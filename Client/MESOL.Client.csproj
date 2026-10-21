@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Client side: the card page in web\ (built from ..\web-src), opened with Alt+L, /mylore or /lore. It only carries
+    requests and answers between the page and the server; every rule is the server's.
+    Shared settings in ..\Directory.Build.props.
+  -->
+
+  <PropertyGroup>
+    <AssemblyName>MESOL.Client</AssemblyName>
+    <RootNamespace>MESOL.Client</RootNamespace>
+    <ModSide>client</ModSide>
+  </PropertyGroup>
+
+  <!-- The game and the chat mod already provide these assemblies, so only our own DLL goes into the mod folder. -->
+  <ItemGroup>
+    <PackageReference Include="ReadyM.SDK.Oblivion.Client" Version="$(ObmpSdkVersion)" />
+    <PackageReference Include="ReadyM.Oblivion.Chat.Client" Version="$(ObmpChatVersion)" />
+  </ItemGroup>
+
+  <!-- RPC contract, packed into client\ (and server\) by the Common project itself. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Common\MESOL.Common.csproj" Private="false" />
+  </ItemGroup>
+
+</Project>

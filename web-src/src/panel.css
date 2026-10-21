@@ -1,0 +1,30 @@
+/* The offer panel: a small box at the top of the screen over the game, in the card's colours. It never has the
+   keyboard; = and - in the game answer it. */
+html, body.panel-page { background: transparent; overflow: hidden; }
+.offers, .notes { position: fixed; left: 50%; transform: translateX(-50%); width: min(40vw, 640px); display: flex; flex-direction: column; gap: .6em; }
+.offers { top: 6vh; }
+.notes { top: calc(6vh + 9.5em); }
+.offer {
+  position: relative; padding: .9em 1.2em 1em 4em; background: var(--paper-bg); color: var(--ink);
+  border-top: 1px solid var(--edge-top); border-bottom: 1px solid var(--edge-bottom); box-shadow: 0 8px 28px #0007;
+  animation: offer-in .25s ease;
+}
+.offer::before, .offer::after {
+  content: ""; position: absolute; top: -.3em; bottom: -.3em; width: .45em; border: 1px solid var(--rail-line); background: var(--rail);
+}
+.offer::before { left: .3em; }
+.offer::after { right: .3em; }
+.offer .mark { position: absolute; left: 1.2em; top: .9em; color: var(--accent); }
+.offer .mark svg { width: 2em; height: 2em; }
+.offer h2 { font-size: 1.25em; line-height: 1.2; }
+.offer p { margin-top: .25em; color: var(--muted); font-size: .92em; }
+.offer .answer { display: flex; gap: 1.2em; margin-top: .55em; font-size: .9em; }
+.offer .time { position: absolute; left: 4em; right: 1.2em; bottom: .4em; height: 3px; background: var(--pill-bg); }
+.offer .time span { display: block; height: 100%; background: var(--accent); width: 100%; transition: width 1s linear; }
+.note {
+  padding: .55em 1em; background: var(--paper-bg); color: var(--ink); border-left: 3px solid var(--accent);
+  box-shadow: 0 6px 20px #0006; font-size: .95em; animation: offer-in .25s ease;
+}
+.note.out, .offer.out { opacity: 0; transition: opacity .4s ease; }
+@keyframes offer-in { from { opacity: 0; transform: translateY(-.6em); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .offer, .note { animation: none; } }

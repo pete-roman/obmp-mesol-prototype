@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Unit tests for the card rules, the privacy filter, the catalog, storage and the chat commands. Never shipped:
+    the mod folder only gets projects with a ModSide. Run with: dotnet test .\MESOL\MESOL.slnx -c Release
+  -->
+
+  <PropertyGroup>
+    <AssemblyName>MESOL.Tests</AssemblyName>
+    <RootNamespace>MESOL.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Server\MESOL.Server.csproj" />
+    <!-- The server references Common without copying it (the mod folder gets it from Common), so the tests do. -->
+    <ProjectReference Include="..\Common\MESOL.Common.csproj" />
+    <!-- The server uses RpRoll compile-only (RpRoll ships its own DLLs), so the tests bring it along. -->
+    <ProjectReference Include="$(RpRollRoot)Server\RpRoll.Server.csproj" />
+    <ProjectReference Include="$(RpRollRoot)Common\RpRoll.Common.csproj" />
+  </ItemGroup>
+
+  <!-- The shipped catalog, so a test can check that it loads cleanly. -->
+  <ItemGroup>
+    <None Include="..\catalog\mesol-lore.json" Link="catalog\mesol-lore.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

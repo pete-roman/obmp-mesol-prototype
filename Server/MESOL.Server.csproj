@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Server side: cards, the lore catalog, visibility, /mylore, /lore and the card page's requests. Shared settings in ..\Directory.Build.props. -->
+
+  <PropertyGroup>
+    <AssemblyName>MESOL.Server</AssemblyName>
+    <RootNamespace>MESOL.Server</RootNamespace>
+    <ModSide>server</ModSide>
+  </PropertyGroup>
+
+  <!-- The server already has these assemblies, so only our own DLL goes into the mod folder. -->
+  <ItemGroup>
+    <PackageReference Include="ReadyM.SDK.Oblivion.Server" Version="$(ObmpSdkVersion)" />
+    <PackageReference Include="ReadyM.Oblivion.Chat.Server" Version="$(ObmpChatVersion)" />
+  </ItemGroup>
+
+  <!-- The tests call the command handlers directly, the way chat does. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="MESOL.Tests" />
+  </ItemGroup>
+
+  <!-- RPC contract for the card page, packed into server\ (and client\) by the Common project itself. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Common\MESOL.Common.csproj" Private="false" />
+  </ItemGroup>
+
+  <!--
+    RpRoll rolls the 5d20 for traits (RpRollApi). Compile-only: RpRoll's own mod folder ships its DLLs, and the
+    manifest makes RpRoll a dependency, so it is loaded before MESOL.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="$(RpRollRoot)Server\RpRoll.Server.csproj" Private="false" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+{
+  "uniqueId": "MESOL",
+  "version": "0.4.2",
+  "name": "MESOL: My Elder Scrolls Oblivion Lore",
+  "author": "Piotr 'Pete' Romanczyk",
+  "description": "A lore-friendly character card for roleplay. End or /mylore opens your card: race, background and places picked from the lore, names and looks in your own words, RP traits typed or rolled with 5d20 on RpRoll's dice, and who sees each field. Nearby (on the card) and Shift+End show other characters' cards; = introduces you, and both players must agree before names and shared fields show.",
+  "dependencies": [
+    {
+      "uniqueId": "OblivionMP.SDK",
+      "minimumVersion": "1.0.0"
+    },
+    {
+      "uniqueId": "OblivionMP.Chat",
+      "minimumVersion": "1.0.0"
+    },
+    {
+      "uniqueId": "RpRoll",
+      "minimumVersion": "0.8.5"
+    }
+  ]
+}

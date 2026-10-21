@@ -1,0 +1,14 @@
+{
+  "name": "mesol-web",
+  "private": true,
+  "description": "MESOL card page. node build.mjs writes ../Client/web (the mod) and preview/ (the same page with a stand-in server, for the browser).",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node test/browser.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "puppeteer-core": "^25.10.0"
+  }
+}

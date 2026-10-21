@@ -1,0 +1,37 @@
+<Project>
+
+  <!--
+    After each build, copy the DLL into the mod folder's server\ or client\ (ModSide, "both" for a shared project)
+    plus the shared manifest. Projects without a ModSide (the tests) are never packed.
+  -->
+  <Target Name="PackModFolder" AfterTargets="Build" Condition="'$(ModSide)' != ''">
+    <PropertyGroup>
+      <!-- Ready-to-copy mod folder: bin\<Configuration>\mods\MESOL\ = manifest.json + server\ + client\ -->
+      <ModOutputDir>$(MSBuildThisFileDirectory)bin\$(Configuration)\mods\MESOL\</ModOutputDir>
+      <ModSides>$(ModSide)</ModSides>
+      <ModSides Condition="'$(ModSide)' == 'both'">client;server</ModSides>
+    </PropertyGroup>
+    <ItemGroup>
+      <_ModSide Include="$(ModSides)" />
+    </ItemGroup>
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)manifest.json" DestinationFolder="$(ModOutputDir)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ModOutputDir)%(_ModSide.Identity)\" />
+    <Message Importance="high" Text="$(ModSide): $([System.IO.Path]::GetFullPath('$(ModOutputDir)'))" />
+  </Target>
+
+  <!-- The lore catalog is data the server reads at start: catalog\mesol-lore.json goes to server\catalog\. -->
+  <Target Name="PackCatalog" AfterTargets="PackModFolder" Condition="'$(ModSide)' == 'server'">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)catalog\mesol-lore.json" DestinationFolder="$(ModOutputDir)server\catalog\" />
+  </Target>
+
+  <!-- The client's card page (client\web\, built by web-src\build.mjs) goes into client\web\ of the mod folder. -->
+  <Target Name="PackWebPage" AfterTargets="PackModFolder" Condition="'$(ModSide)' == 'client'">
+    <ItemGroup>
+      <_WebFile Include="$(MSBuildProjectDirectory)\web\**\*" />
+    </ItemGroup>
+    <Error Condition="'@(_WebFile)' == ''" Text="Client\web is empty. Run: node MESOL\web-src\build.mjs" />
+    <RemoveDir Directories="$(ModOutputDir)client\web" />
+    <Copy SourceFiles="@(_WebFile)" DestinationFiles="@(_WebFile->'$(ModOutputDir)client\web\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+</Project>

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Common/">
+    <Project Path="Common/MESOL.Common.csproj" />
+  </Folder>
+  <Folder Name="/Client/">
+    <Project Path="Client/MESOL.Client.csproj" />
+  </Folder>
+  <Folder Name="/Server/">
+    <Project Path="Server/MESOL.Server.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/MESOL.Tests.csproj" />
+  </Folder>
+</Solution>

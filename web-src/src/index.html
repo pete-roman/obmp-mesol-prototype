@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MESOL: lore card</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="closed" data-theme="light" data-mode="edit" data-ui="browse">
+
+  <main id="book" aria-label="Your lore card">
+    <section class="page left">
+      <header class="book-head">
+        <h1>My Lore</h1>
+        <p id="who"></p>
+      </header>
+      <nav id="tabs" class="tabs" aria-label="Sections"></nav>
+      <ol id="fields" class="fields"></ol>
+      <div class="usage" aria-hidden="true"><span id="used"></span></div>
+      <p id="used-text" class="used-text"></p>
+    </section>
+    <section class="page right">
+      <div id="detail" class="detail"></div>
+      <div id="dice-tray" class="dice-tray" hidden><div class="tray-caption"><span>RP roll &middot; 5d20</span><span id="tray-state"></span></div><div id="tray-text" class="tray-text"></div></div>
+      <p id="status" class="status" aria-live="polite"></p>
+      <p id="keys" class="keys"></p>
+    </section>
+  </main>
+
+  <main id="viewer" aria-label="Another character's lore card">
+    <section class="page single">
+      <header class="book-head">
+        <h1 id="viewer-title"></h1>
+        <p id="viewer-sub">Their lore card, as they let you see it</p>
+      </header>
+      <div id="viewer-body" class="viewer-body"></div>
+      <p id="viewer-keys" class="keys"><span><kbd>&uarr;&darr;</kbd>Scroll</span><span><kbd>K</kbd>Chat</span><span><kbd>Esc</kbd>Close</span></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

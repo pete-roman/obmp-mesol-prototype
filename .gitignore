@@ -1,0 +1,18 @@
+# .NET build output
+bin/
+obj/
+TestResults/
+
+# the built card page and its browser preview (node web-src/build.mjs writes them) and npm packages
+Client/web/
+web-src/preview/
+web-src/node_modules/
+
+# editors and OS
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+.DS_Store

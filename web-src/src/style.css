@@ -1,0 +1,227 @@
+/* MESOL card page. The look follows RpRoll's dice board (paper panels on brass rails, Kingthings headings) so the two
+   pages feel like one set. Original CSS; the Kingthings and Cinzel font files are unchanged. */
+@font-face { font-family: "Cinzel"; src: url("fonts/Cinzel-Bold.ttf"); font-weight: 700; }
+@font-face { font-family: "Petrock"; src: url("fonts/Kingthings Petrock.ttf"); }
+@font-face { font-family: "Petrock Light"; src: url("fonts/Kingthings Petrock light.ttf"); }
+:root {
+  --u: clamp(14px, 1.6vmin, 24px);
+  /* the book and the dice tray; RpRoll's body.present uses the same numbers, so its board lands in the tray */
+  --page-w: min(46vw, 1180px); --tray-inner: calc(var(--page-w) - 6.8vmin);
+  --tray-h: min(42vh, calc(var(--page-w) * .62)); --tray-w: min(var(--tray-inner), calc(var(--tray-h) * 1.35));
+  --tray-right: calc(49vw - var(--page-w) + 3.4vmin + (var(--tray-inner) - var(--tray-w)) / 2);
+  --tray-bottom: calc(5vh + 9.5vmin);
+  /* What players write uses Palatino (ships with Windows): it has Polish and other accented letters, Petrock does not. */
+  --text: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+/* Colours: dark is a slate green with cream ink and a khaki accent; light is the same green climate on pale sage
+   paper. */
+body, body[data-theme="light"] {
+  --paper-bg: radial-gradient(ellipse at 40% 25%, rgba(250, 252, 244, .55), transparent 70%), linear-gradient(110deg, #eef0e4, #dfe5d4);
+  --edge-top: #e6eadc; --edge-bottom: #6e7a63;
+  --ink: #222922; --head: #1e251f; --muted: #535c4b; --rule: #95a283;
+  --fine: rgba(70, 86, 58, .2); --accent: #4b6a37; --red: #8a3b2b; --ok: #3f6a2f;
+  --band: #f9fbf3; --field-bg: #fbfcf7; --field-line: #95a283;
+  --key-bg: #2c362d; --key-ink: #eef0e4; --key-line: #55614f;
+  --pill-bg: rgba(78, 98, 62, .08); --pill-on: #f4f7eb;
+  --rail-line: #4d5946; --rail: linear-gradient(90deg, #5a6752 0 14%, #c3cdb2 15% 31%, #7e8b6f 32% 48%, #aab697 49% 69%, #4a5544 70% 100%);
+  --vis-public: #3d6a2c; --vis-known: #7a6220; --vis-friends: #2d5d66; --vis-private: #8a3b2b;
+}
+body[data-theme="dark"] {
+  --paper-bg: radial-gradient(ellipse at 40% 25%, rgba(70, 80, 66, .22), transparent 70%), linear-gradient(110deg, #242826, #1c201f);
+  --edge-top: #4a5246; --edge-bottom: #4a5246;
+  --ink: #eee8da; --head: #f0e5ca; --muted: #b7b8a9; --rule: #697163;
+  --fine: rgba(204, 208, 181, .12); --accent: #c6b68d; --red: #eda493; --ok: #b8cf9b;
+  --band: #373d36; --field-bg: #151a18; --field-line: #72796b;
+  --key-bg: #151a18; --key-ink: #eee8da; --key-line: #72796b;
+  --pill-bg: rgba(196, 208, 170, .05); --pill-on: #41483c;
+  --rail-line: #2c332d; --rail: linear-gradient(90deg, #262c27 0 14%, #7f8a70 15% 31%, #454f41 32% 48%, #6c785e 49% 69%, #1f2420 70% 100%);
+  --vis-public: #b8cf9b; --vis-known: #e1c98c; --vis-friends: #a0ced5; --vis-private: #eda493;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  color: var(--ink); font: var(--u)/1.4 var(--text);
+  background: radial-gradient(ellipse at 50% 45%, rgba(25, 31, 32, .85), rgba(9, 14, 16, .94));
+  user-select: none;
+  cursor: none; /* keys only in game: no pointer */
+}
+body.closed { background: transparent; }
+body.closed main { display: none !important; }
+[hidden] { display: none !important; }
+svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+kbd {
+  display: inline-flex; justify-content: center; align-items: center; min-width: 1.7em; min-height: 1.6em;
+  padding: .05em .35em; margin-right: .3em; background: var(--key-bg); color: var(--key-ink);
+  border: 1px solid var(--key-line); border-radius: 1px; font: 700 .7em/1.3 "Cinzel", Georgia, serif; vertical-align: middle;
+}
+h1, h2, h3 { font-family: "Petrock", Georgia, serif; font-weight: normal; color: var(--head); }
+
+/* ---- the book: two paper pages ---- */
+main { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; gap: 2vw; padding: 5vh 2vw; }
+body[data-mode="edit"] #viewer, body[data-mode="view"] #book { display: none; }
+.page {
+  position: relative; height: 100%; display: flex; flex-direction: column; padding: 0 2.1em 1.2em;
+  background: var(--paper-bg); border-top: 1px solid var(--edge-top); border-bottom: 1px solid var(--edge-bottom);
+  box-shadow: 0 6px 20px #0005; transition: background .25s ease, color .25s ease;
+}
+.page.left { width: var(--page-w); }
+.page.right { width: var(--page-w); padding-left: 3.4vmin; padding-right: 3.4vmin; }
+.page.single { width: min(62vw, 980px); }
+.page::before, .page::after {
+  content: ""; position: absolute; top: -.35em; bottom: -.35em; width: .55em; pointer-events: none;
+  border: 1px solid var(--rail-line); background: var(--rail); box-shadow: 0 1px 3px #0005;
+}
+.page::before { left: .35em; }
+.page::after { right: .35em; }
+.book-head { text-align: center; padding: .9em 0 .6em; border-bottom: 1px solid var(--rule); }
+.book-head h1 { font-size: 2.3em; line-height: 1.1; }
+.book-head p { color: var(--muted); font-style: italic; margin-top: .25em; min-height: 1.4em; }
+
+/* ---- sections and fields ---- */
+.tabs { display: flex; justify-content: space-between; gap: .3em; padding: .55em 0 0; border-bottom: 1px solid var(--rule); }
+.tab { flex: 1 1 0; text-align: center; font: 1.08em "Petrock", Georgia, serif; color: var(--muted); padding: .2em .1em .35em; border-bottom: 3px solid transparent; white-space: nowrap; }
+.tab small { font: 700 .55em var(--text); margin-left: .3em; vertical-align: super; }
+.tab.on { color: var(--ink); border-bottom-color: var(--accent); }
+.fields { list-style: none; flex: 1 1 auto; overflow-y: auto; margin: .5em 0; scrollbar-width: none; }
+.field { display: grid; grid-template-columns: 10.5em 1fr auto; align-items: center; gap: .8em; min-height: 2.9em; padding: .25em .7em; border-bottom: 1px solid var(--fine); }
+.field .label { font: 1.08em "Petrock Light", Georgia, serif; display: flex; align-items: center; gap: .3em; }
+.field .from-list { color: var(--muted); display: inline-flex; }
+.field .from-list svg { width: .85em; height: .85em; }
+.field .value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.field .unset { color: var(--muted); font-style: italic; font-size: .9em; }
+.field.cursor { background: var(--band); box-shadow: inset 3px 0 var(--accent); }
+.vis { display: inline-flex; align-items: center; gap: .3em; font: 700 .7em "Cinzel", Georgia, serif; letter-spacing: .03em; text-transform: uppercase; }
+.vis svg { width: 1.45em; height: 1.45em; }
+.vis-public { color: var(--vis-public); }
+.vis-known { color: var(--vis-known); }
+.vis-friends { color: var(--vis-friends); }
+.vis-private { color: var(--vis-private); }
+.vis.locked { opacity: .7; }
+.usage { height: .35em; margin: .2em 1em 0; background: var(--pill-bg); border: 1px solid var(--fine); }
+.usage span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.used-text { text-align: center; color: var(--muted); font-size: .72em; margin-top: .3em; }
+
+/* ---- the right page: one field, an input, a picker or a preview ---- */
+.detail { flex: 1 1 auto; overflow-y: auto; padding: 1.1em .3em .4em; display: flex; flex-direction: column; min-height: 0; scrollbar-width: none; }
+.detail h2 { font-size: 2em; line-height: 1.1; }
+.detail .kind { color: var(--muted); font-style: italic; margin: .2em 0 1em; }
+.who-sees { display: flex; flex-wrap: wrap; align-items: center; gap: .5em 1em; }
+.who-sees .caption { font: 1.05em "Petrock Light", Georgia, serif; }
+.who-sees small { color: var(--muted); font-style: italic; }
+.pills { display: flex; gap: .35em; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: .35em; padding: .25em .6em; border: 1px solid var(--fine); background: var(--pill-bg); color: var(--muted); font-size: .9em; }
+.pill.on { border-color: var(--rule); background: var(--pill-on); color: var(--ink); outline: 2px solid var(--accent); outline-offset: -2px; }
+.vis-help { color: var(--muted); font-size: .88em; margin: .45em 0 1em; }
+.current { border-top: 1px solid var(--fine); padding-top: .9em; margin-bottom: .9em; }
+.current .text, .current .pick-name { font-size: 1.25em; }
+.current .pick-name { font: 1.5em "Petrock", Georgia, serif; color: var(--head); }
+.current .summary { margin-top: .4em; }
+.current .longtext { white-space: normal; line-height: 1.5; }
+.none { color: var(--muted); font-style: italic; }
+.hint { color: var(--muted); font-size: .88em; margin-top: .4em; padding-top: .8em; border-top: 1px solid var(--fine); }
+.game-hint { display: flex; align-items: center; gap: .45em; padding: .55em .7em; margin: .3em 0 .8em; border: 1px dashed var(--rule); }
+.game-hint svg { color: var(--accent); }
+#edit, #filter {
+  width: 100%; font: 1.2em/1.45 var(--text); color: var(--ink); background: var(--field-bg);
+  border: 1px solid var(--field-line); padding: .45em .6em; outline: none; user-select: text;
+}
+#edit:focus, #filter:focus { box-shadow: 0 0 0 2px var(--accent); }
+textarea#edit { flex: 1 1 auto; min-height: 9em; resize: none; font-size: 1.08em; }
+.counter { text-align: right; color: var(--muted); font-size: .8em; margin: .3em 0 .6em; }
+.options { list-style: none; margin-top: .6em; flex: 1 1 auto; overflow-y: auto; min-height: 6em; border-top: 1px solid var(--fine); scrollbar-width: none; }
+.option { display: flex; align-items: center; gap: .5em; min-height: 2.4em; padding: .2em .7em; border-bottom: 1px solid var(--fine); }
+.option > span { flex: 1 1 auto; }
+.option small { display: block; color: var(--muted); font-size: .78em; font-style: italic; }
+.option.cursor { background: var(--band); box-shadow: inset 3px 0 var(--accent); }
+.option.chosen > span::after { content: "  \2713"; color: var(--accent); }
+.options .note { color: var(--muted); font-style: italic; padding: .6em .7em; }
+.tag { font: 700 .62em "Cinzel", Georgia, serif; letter-spacing: .04em; text-transform: uppercase; font-style: normal; padding: .15em .45em; border: 1px solid var(--rule); color: var(--muted); }
+.tag.origin { color: var(--accent); border-color: var(--accent); }
+.tag.game { color: var(--ok); border-color: var(--ok); }
+.option-detail { margin-top: .7em; min-height: 6.5em; padding-top: .6em; border-top: 1px solid var(--rule); font-size: .95em; }
+.option-detail b { font: 1.25em "Petrock", Georgia, serif; font-weight: normal; color: var(--head); }
+.option-detail p { margin-top: .25em; }
+.option-detail .note { color: var(--muted); font-style: italic; font-size: .88em; }
+.status { min-height: 1.5em; margin: .4em 0 .2em; font-size: .92em; }
+.status.error { color: var(--red); }
+.status.warn { color: var(--accent); }
+.status.done { color: var(--ok); }
+.status.busy { color: var(--muted); font-style: italic; }
+.keys { display: flex; flex-wrap: wrap; gap: .35em 1em; padding-top: .55em; border-top: 1px solid var(--rule); color: var(--muted); font-size: .82em; }
+.keys span { white-space: nowrap; }
+
+/* ---- a card as others see it (preview and the viewer) ---- */
+.seen, .viewer-body { margin-top: .4em; }
+.viewer-body { flex: 1 1 auto; overflow-y: auto; padding: 1em .4em; scrollbar-width: none; }
+.card-header { font: 1.7em/1.2 "Petrock", Georgia, serif; color: var(--head); padding-bottom: .5em; border-bottom: 1px solid var(--fine); }
+.seen h3, .viewer-body h3 { font-size: 1.3em; margin: .9em 0 .35em; }
+.seen dl, .viewer-body dl { display: grid; grid-template-columns: 9.5em 1fr; gap: .35em 1em; }
+.seen dt, .viewer-body dt { font: 1em "Petrock Light", Georgia, serif; color: var(--muted); }
+.seen dd.long, .viewer-body dd.long { grid-column: 1 / -1; line-height: 1.5; padding-bottom: .4em; }
+
+@media (max-height: 900px) {
+  :root { --u: 13.5px; }
+  main { padding: 3.5vh 2vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page, .usage span { transition: none; }
+}
+
+/* ---- groups, traits and their dice ---- */
+.group-head {
+  list-style: none; padding: .9em .7em .25em; font: 1.05em "Petrock", Georgia, serif; color: var(--accent);
+  border-bottom: 1px solid var(--rule); letter-spacing: .02em;
+}
+.field .die, .detail h2 .die, .tab-die { display: inline-flex; color: var(--accent); }
+.field .die svg { width: 1.15em; height: 1.15em; }
+.detail h2 .die svg { width: .8em; height: .8em; margin-right: .25em; vertical-align: -.05em; }
+.tab-die svg { width: .9em; height: .9em; margin-right: .2em; }
+.trait-value { display: flex; align-items: center; gap: .6em; }
+.trait-value b { font: 700 1.15em var(--text); min-width: 1.8em; text-align: right; }
+.trait-value .word { color: var(--muted); font-style: italic; font-size: .9em; }
+.bar { display: inline-block; width: 5.5em; height: .45em; background: var(--pill-bg); border: 1px solid var(--fine); }
+.bar span { display: block; height: 100%; background: var(--accent); }
+.tag.reroll { color: var(--accent); border-color: var(--accent); }
+.trait-big { display: flex; align-items: center; gap: .8em; margin: .2em 0 .6em; }
+.trait-big b { font: 700 3.4em/1 var(--text); color: var(--head); }
+.trait-big .word { display: block; font: 1.25em "Petrock Light", Georgia, serif; margin-bottom: .35em; }
+.trait-big .bar { width: 14em; height: .6em; }
+.trait-big.empty span, .trait-big.rolling span { font-style: italic; color: var(--muted); font-size: 1.15em; }
+.trait-big .die svg { width: 2.6em; height: 2.6em; color: var(--accent); }
+.spin { animation: spin 1.1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.rolls { list-style: none; margin: .2em 0 .8em; color: var(--muted); font-size: .92em; }
+.rolls b { color: var(--ink); }
+.choices { display: flex; flex-direction: column; gap: .5em; margin: .4em 0 .6em; font-size: 1.05em; }
+.warn-note { color: var(--accent); font-size: .9em; font-style: italic; margin: .3em 0 .6em; }
+.fixed-note { display: flex; align-items: center; gap: .4em; color: var(--muted); font-style: italic; }
+#edit.number { width: 6em; font-size: 2em; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+.field.trait { min-height: 2.45em; }
+
+/* ---- the dice tray: where RpRoll's small board lands for a trait roll ----
+   Same numbers as RpRoll's body.present box (its style.css), so the board sits exactly on it. */
+.dice-tray {
+  position: fixed; right: var(--tray-right); bottom: var(--tray-bottom); width: var(--tray-w); height: var(--tray-h);
+  border: 1px solid var(--fine); border-radius: 2px; background: radial-gradient(ellipse at 50% 55%, var(--pill-bg), transparent 75%), var(--band);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, .08);
+}
+.dice-tray .tray-caption { position: absolute; top: .55em; left: .8em; right: .8em; display: flex; justify-content: space-between; font: 700 .6em "Cinzel", Georgia, serif; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+.dice-tray .tray-text { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; color: var(--muted); font-size: 1em; }
+.dice-tray .tray-text b { color: var(--ink); font-size: 1.3em; }
+.dice-tray .tray-text .die svg { width: 2.4em; height: 2.4em; color: var(--accent); opacity: .7; display: block; margin: 0 auto .4em; }
+.dice-tray.rolling .tray-text { visibility: hidden; } /* RpRoll's board is on top now */
+@media (max-height: 900px) {
+  :root { --tray-bottom: calc(3.5vh + 12vmin); --tray-h: min(36vh, calc(var(--page-w) * .62)); }
+}
+body[data-part="traits"][data-ui="browse"] .detail { padding-bottom: calc(var(--tray-h) + 1.2em); }
+
+/* ---- Nearby ---- */
+.field.person { grid-template-columns: 1fr auto auto; }
+.field.person .label { font: 1.05em var(--text); }
+.field.person .die svg { width: 1.2em; height: 1.2em; }
+.field.person .vis { color: var(--muted); font: .85em var(--text); text-transform: none; letter-spacing: 0; }
+.nobody { list-style: none; padding: 1.2em .7em; color: var(--muted); font-style: italic; }
+.tag.rel-known { color: var(--vis-known); border-color: var(--vis-known); }
+.tag.rel-friend { color: var(--vis-friends); border-color: var(--vis-friends); }
+.tag.rel-blocked { color: var(--vis-private); border-color: var(--vis-private); }

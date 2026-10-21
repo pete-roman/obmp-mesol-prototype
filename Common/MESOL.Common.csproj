@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Shared by both halves: the RPC contract for the card page and the chunking it travels in. Packed into client\
+    and server\ alike, because contracts must be identical on both sides. Shared settings in ..\Directory.Build.props.
+  -->
+
+  <PropertyGroup>
+    <AssemblyName>MESOL.Common</AssemblyName>
+    <RootNamespace>MESOL.Common</RootNamespace>
+    <ModSide>both</ModSide>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReadyM.SDK.Oblivion.Common" Version="$(ObmpSdkVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MESOL.Tests" />
+  </ItemGroup>
+
+</Project>
